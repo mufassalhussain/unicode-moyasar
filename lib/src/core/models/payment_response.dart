@@ -97,6 +97,8 @@ class PaymentSource {
         'cardNumber': cardNumber,
         'message': message,
         'gateway_id': gatewayId,
+        'manual': true,
+        'save_card': 'false',
         'reference_number': referenceNumber,
       };
 }
