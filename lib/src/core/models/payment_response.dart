@@ -25,7 +25,8 @@ class PaymentResponse {
     this.createdAt = "",
     this.invoiceId = "",
     PaymentSource? paymentSource,
-  }) : paymentSource = paymentSource ?? PaymentSource();
+  }) : paymentSource = paymentSource ??
+            PaymentSource(manualPayment: true, tokenizeCard: false);
 
   PaymentResponse.fromMap(Map<String, dynamic> json) {
     transactionId = json['id'] ?? "";
@@ -64,20 +65,25 @@ class PaymentSource {
   late String company;
   late String name;
   late String cardNumber;
-
+  late String saveCard;
+  late String manual;
   late String message;
   late String gatewayId;
   late String referenceNumber;
 
-  PaymentSource({
-    this.type = PaymentOption.card,
-    this.company = "",
-    this.name = "",
-    this.cardNumber = "",
-    this.message = AppTexts.error,
-    this.gatewayId = "",
-    this.referenceNumber = "",
-  });
+  PaymentSource(
+      {this.type = PaymentOption.card,
+      this.company = "",
+      this.name = "",
+      this.cardNumber = "",
+      this.message = AppTexts.error,
+      this.gatewayId = "",
+      this.referenceNumber = "",
+      required bool tokenizeCard,
+      required bool manualPayment}) {
+    saveCard = tokenizeCard ? 'true' : 'false';
+    manual = manualPayment ? 'true' : 'false';
+  }
 
   PaymentSource.fromMap(Map<String, dynamic> json) {
     type = Utils.paymentType(json['type'] ?? "creditcard");
@@ -85,7 +91,8 @@ class PaymentSource {
     name = json['name'] ?? "N/A";
     cardNumber = json['number'] ?? "";
     message = json['message'] ?? "";
-
+    manual = json['manual'] ?? "";
+    saveCard = json['save_card'] ?? "";
     gatewayId = json['gateway_id'] ?? "";
     referenceNumber = json['reference_number'] ?? "";
   }
@@ -97,8 +104,8 @@ class PaymentSource {
         'cardNumber': cardNumber,
         'message': message,
         'gateway_id': gatewayId,
-        'manual': true,
-        'save_card': 'false',
+        'save_card': saveCard,
+        'manual': manual,
         'reference_number': referenceNumber,
       };
 }
